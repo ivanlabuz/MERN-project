@@ -1,35 +1,35 @@
 import React, { useState, useEffect } from 'react'
 import { Modal, InputGroup, FormControl, Button } from 'react-bootstrap'
 
-export const EditModal = (props) => {
+export const EditModal = ({handleCloseEdit, id, name, price, productEdit, showEdit}) => {
   const [valueName, setValueName] = useState('')
   const [valuePrice, setValuePrice] = useState('')
-  
+
   const editCurrentProduct = () => {
-    props.handleCloseEdit()
-    props.productEdit(props.id, {
+    handleCloseEdit()
+    productEdit(id, {
       name: valueName,
       price: valuePrice
     })
   }
-  
-  useEffect(() => {
-    if (props.name) {
-      setValueName(props.name)
-    }
-  }, [props.name, props.showEdit])
 
   useEffect(() => {
-    if (props.price) {
-      setValuePrice(props.price)
+    if (name) {
+      setValueName(name)
     }
-  }, [props.price, props.showEdit])
+  }, [name, showEdit])
+
+  useEffect(() => {
+    if (price) {
+      setValuePrice(price)
+    }
+  }, [price, showEdit])
 
   return (
-    <Modal show={props.showEdit} onHide={props.handleCloseEdit}>
+    <Modal show={showEdit} onHide={handleCloseEdit}>
       <Modal.Header closeButton>
         <Modal.Title>
-          Make changes to product data {props.name}
+          Make changes to product data {name}
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
@@ -39,7 +39,11 @@ export const EditModal = (props) => {
               id="inputGroup-sizing-default"
               style={{ width: '100px' }}
             >
-              <i style={{ minWidth: '15px' }} className="fa fa-umbrella" aria-hidden="true"></i>&nbsp;
+              <i
+                style={{ minWidth: '15px' }}
+                className="fa fa-umbrella"
+                aria-hidden="true"
+              ></i>&nbsp;
                   Name
               </InputGroup.Text>
           </InputGroup.Prepend>
@@ -56,7 +60,11 @@ export const EditModal = (props) => {
               id="inputGroup-sizing-default"
               style={{ width: '100px' }}
             >
-              <i style={{ minWidth: '15px' }} className="fa fa-usd" aria-hidden="true"></i>&nbsp;
+              <i
+                style={{ minWidth: '15px' }}
+                className="fa fa-usd"
+                aria-hidden="true"
+              ></i>&nbsp;
                   Price
               </InputGroup.Text>
           </InputGroup.Prepend>
@@ -71,7 +79,7 @@ export const EditModal = (props) => {
       </Modal.Body>
       <Modal.Footer>
         <Button variant="secondary"
-          onClick={props.handleCloseEdit}
+          onClick={handleCloseEdit}
         >
           Close
           </Button>

@@ -7,58 +7,85 @@ import { DeleteModal } from './DeleteModal'
 import { deleteInvoice } from '../../store/actions/invoices'
 import { NavLink } from 'react-router-dom'
 
-const Invoices = (props) => {
-  const [currentId, setCurrentId] = useState(null);
-  const [currentName, setCurrentName] = useState(null);
+const Invoices = ({ customers, deleteInvoice, invoices }) => {
+  const [currentInvoice, setCurrentInvoice] = useState({
+    id: null,
+    name: null
+  })
   const [showDelete, setShowDelete] = useState(false);
-  
+
   const handleCloseDelete = (id) => {
-    setCurrentId(null);
+    setCurrentInvoice((prevState) => ({
+      ...prevState,
+      id: null
+    }))
     setShowDelete(false);
   }
 
   const handleShowDelete = (id, name) => {
-    setCurrentName(name)
+    setCurrentInvoice({ id, name })
     setShowDelete(true);
-    setCurrentId(id);
   }
 
   let customerName = (customer_id) => {
-    return props.customers.find((item) => item.id === customer_id).name
+    let customer = customers.find((item) => item.id === customer_id)
+    if (customer) {
+      return customer.name
+    }
   }
 
   const invoicesList = (array) => {
-    return array.map((invoices, index) => {
-      return (
-        <tr key={invoices.id}>
-          <td>{index + 1}</td>
-          <td>{customerName(invoices.customer_id)}</td>
-          <td>{invoices.discount}</td>
-          <td
-            className='EditInvoicesList'
-          >
-            {invoices.total}
-            <div>
-              <NavLink to={`/Invoices/Invoice/${invoices.id}`} >
-                <i
-                  className="fa fa-pencil"
-                  aria-hidden="true"
-                ></i>
-              </NavLink>&nbsp;
+    if (array.length) {
+      return <Table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Customer</th>
+            <th>Discount</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          {array.map((invoice, index) => {
+            return (
+              <tr key={invoice.id}>
+                <td>{index + 1}</td>
+                <td>{customerName(invoice.customer_id)}</td>
+                <td>{invoice.discount}</td>
+                <td
+                  className='EditInvoicesList'
+                >
+                  {invoice.total}
+                  <div>
+                    <NavLink to={`/Invoices/Invoice/${invoice.id}`} >
+                      <i
+                        className="fa fa-pencil"
+                        aria-hidden="true"
+                      ></i>
+                    </NavLink>&nbsp;
                             <i
-                className="fa fa-trash"
-                aria-hidden="true"
-                onClick={() => handleShowDelete(invoices.id, invoices.name)}
-              ></i>
-            </div>
-          </td>
-        </tr>
-      )
-    })
+                      className="fa fa-trash"
+                      aria-hidden="true"
+                      onClick={() => {
+                        handleShowDelete(invoice.id, invoice.name)
+                      }}
+                    ></i>
+                  </div>
+                </td>
+              </tr>
+            )
+          })}
+        </tbody>
+      </Table>
+    } else {
+      return <h2 style={{ textAlign: 'center', paddingTop: '50px' }}>
+        No invoices, create new invoices.
+      </h2 >
+    }
   }
 
   const invoiceDelete = id => {
-    props.deleteInvoice(id)
+    deleteInvoice(id)
   }
 
   return (
@@ -69,25 +96,13 @@ const Invoices = (props) => {
           variant="outline-dark"
         >Create</Button>
       </NavLink>
-      <Table>
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Customer</th>
-            <th>Discount</th>
-            <th>Total</th>
-          </tr>
-        </thead>
-        <tbody>
-          {invoicesList(props.invoices)}
-        </tbody>
-      </Table>
+      {invoicesList(invoices)}
       <DeleteModal
         handleCloseDelete={handleCloseDelete}
         invoiceDelete={invoiceDelete}
         showDelete={showDelete}
-        id={currentId}
-        name={currentName}
+        id={currentInvoice.id}
+        name={currentInvoice.name}
       />
       <Helmet>
         <title>Invoices</title>

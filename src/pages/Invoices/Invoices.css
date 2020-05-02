@@ -1,14 +1,16 @@
 .Invoices {
 	padding: 50px 100px
 }
+
 .Invoices > h1 {
 	display: inline;
 }
+
 .Invoices > a > button {
 	vertical-align: super;
 	margin-left: 10px;
-
 }
+
 .EditInvoicesList{
 	display: flex;
 	justify-content: space-between;

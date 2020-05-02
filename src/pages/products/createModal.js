@@ -1,21 +1,22 @@
 import React, { useState } from 'react'
 import { Modal, InputGroup, FormControl, Button } from 'react-bootstrap'
 
-export const CreateModal = (props) => {
+export const CreateModal = ({handleCloseCreate, handleClose, newProduct, showCreate}) => {
   const [valueName, setValueName] = useState('')
   const [valuePrice, setValuePrice] = useState('')
-  
+
   const saveNewProduct = () => {
-    props.handleCloseCreate()
-    props.newProduct({
+    handleCloseCreate()
+    newProduct({
       name: valueName,
       price: valuePrice,
     })
     setValueName('')
     setValuePrice('')
   }
+  
   return (
-    <Modal show={props.showCreate} onHide={props.handleCloseCreate}>
+    <Modal show={showCreate} onHide={handleCloseCreate}>
       <Modal.Header closeButton>
         <Modal.Title>
           Introduce New Product
@@ -28,7 +29,11 @@ export const CreateModal = (props) => {
               id="inputGroup-sizing-default"
               style={{ width: '100px' }}
             >
-              <i style={{ minWidth: '15px' }} className="fa fa-umbrella" aria-hidden="true"></i>&nbsp;
+              <i
+                style={{ minWidth: '15px' }}
+                className="fa fa-umbrella"
+                aria-hidden="true"
+              ></i>&nbsp;
                   Name
               </InputGroup.Text>
           </InputGroup.Prepend>
@@ -46,7 +51,11 @@ export const CreateModal = (props) => {
               id="inputGroup-sizing-default"
               style={{ width: '100px' }}
             >
-              <i style={{ minWidth: '15px' }} className="fa fa-usd" aria-hidden="true"></i>&nbsp;
+              <i
+                style={{ minWidth: '15px' }}
+                className="fa fa-usd"
+                aria-hidden="true"
+              ></i>&nbsp;
                   Price
               </InputGroup.Text>
           </InputGroup.Prepend>
@@ -62,7 +71,7 @@ export const CreateModal = (props) => {
       </Modal.Body>
       <Modal.Footer>
         <Button variant="secondary"
-          onClick={props.handleClose}
+          onClick={handleClose}
         >
           Close
           </Button>

@@ -1,10 +1,14 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { Helmet } from 'react-helmet'
-import { InputGroup, FormControl, Form, Button, Table } from 'react-bootstrap'
+import { InputGroup, FormControl, Form, Button } from 'react-bootstrap'
 import './Invoice.css'
 import invoiceHoc from './invoiceHoc'
-import { createInvoiceAndItems, editInvoiceAndItems, removeInvoiceItems } from '../../store/actions/invoiceItems'
+import {
+	createInvoiceAndItems,
+	editInvoiceAndItems,
+	removeInvoiceItems
+} from '../../store/actions/invoiceItems'
 
 const Invoice = ({
 	title,
@@ -47,7 +51,7 @@ const Invoice = ({
 					value={newInvoice.customer_id}
 					onChange={(event) => handleChangeCustomer(event)}
 					custom>
-					<option disabled>select...</option>
+					<option value='' disabled>select...</option>
 					{selectCustomerOptions()}
 				</Form.Control>
 			</Form.Group>
@@ -76,25 +80,18 @@ const Invoice = ({
 				</div>
 			</Form.Group>
 		</Form>
-		<Table>
-			<thead>
-				<tr>
-					<th>Name</th>
-					<th>Price</th>
-					<th>Qty</th>
-				</tr>
-			</thead>
-			<tbody>
-				{invoiceItemsList()}
-			</tbody>
-		</Table>
+		{invoiceItemsList()}
 		<div style={{ display: 'flex', justifyContent: 'space-between' }}>
 			<h1>Total:{total}</h1>
 			<Button
 				variant="outline-dark"
 				style={{ display: 'block' }}
 				onClick={hendlersAddAllStore}
-				disabled={!newInvoice.discount || newInvoice.customer_id === 'select...' || total === 0}
+				disabled={
+					!newInvoice.discount ||
+					newInvoice.customer_id === 'select...' ||
+					total === '0.00'
+				}
 			>
 				{titleButton}
 			</Button>
@@ -116,10 +113,15 @@ function mapStateToProps(state) {
 
 function mapStateToDispatch(dispatch) {
 	return {
-		createInvoiceAndItems: (invoice, invoiceItems) => dispatch(createInvoiceAndItems(invoice, invoiceItems)),
-		editInvoiceAndItems: (invoice, invoiceItems) => dispatch(editInvoiceAndItems(invoice, invoiceItems)),
+		createInvoiceAndItems: (invoice, invoiceItems) =>
+			dispatch(createInvoiceAndItems(invoice, invoiceItems)),
+		editInvoiceAndItems: (invoice, invoiceItems) =>
+			dispatch(editInvoiceAndItems(invoice, invoiceItems)),
 		removeInvoiceItems: (arrayId) => dispatch(removeInvoiceItems(arrayId)),
 	}
 }
 
-export default connect(mapStateToProps, mapStateToDispatch)(invoiceHoc(Invoice))
+export default connect(
+	mapStateToProps,
+	mapStateToDispatch
+)(invoiceHoc(Invoice))

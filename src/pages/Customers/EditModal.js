@@ -1,13 +1,22 @@
 import React, { useState, useEffect } from 'react'
 import { Modal, InputGroup, FormControl, Button } from 'react-bootstrap'
 
-export const EditModal = (props) => {
+export const EditModal = ({
+  address,
+  customerEdit,
+  handleCloseEdit,
+  id,
+  name,
+  phone,
+  showEdit
+}) => {
   const [valueName, setValueName] = useState('')
   const [valueAddress, setValueAddress] = useState('')
   const [valuePhone, setValuePhone] = useState('')
+
   const editCurrentCustomers = () => {
-    props.handleCloseEdit()
-    props.customerEdit(props.id, {
+    handleCloseEdit()
+    customerEdit(id, {
       name: valueName,
       address: valueAddress,
       phone: valuePhone
@@ -15,27 +24,29 @@ export const EditModal = (props) => {
   }
 
   useEffect(() => {
-    if (props.name) {
-      setValueName(props.name)
+    if (name) {
+      setValueName(name)
     }
-  }, [props.name, props.showEdit])
+  }, [name, showEdit])
 
   useEffect(() => {
-    if (props.address) {
-      setValueAddress(props.address)
+    if (address) {
+      setValueAddress(address)
     }
-  }, [props.address, props.showEdit])
+  }, [address, showEdit])
 
   useEffect(() => {
-    if (props.phone) {
-      setValuePhone(props.phone)
+    if (phone) {
+      setValuePhone(phone)
     }
-  }, [props.phone, props.showEdit])
+  }, [phone, showEdit])
 
   return (
-    <Modal show={props.showEdit} onHide={props.handleCloseEdit}>
+    <Modal show={showEdit} onHide={handleCloseEdit}>
       <Modal.Header closeButton>
-        <Modal.Title>Make changes to user data {props.name}</Modal.Title>
+        <Modal.Title>
+          Make changes to user data {name}
+        </Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <InputGroup className="mb-3">
@@ -71,7 +82,6 @@ export const EditModal = (props) => {
             placeholder="890 Main St, Dansville CA 94325"
             onChange={event => setValueAddress(event.target.value)}
             value={valueAddress}
-
           />
         </InputGroup>
         <InputGroup className="mb-3">
@@ -95,14 +105,18 @@ export const EditModal = (props) => {
       </Modal.Body>
       <Modal.Footer>
         <Button variant="secondary"
-          onClick={props.handleCloseEdit}
+          onClick={handleCloseEdit}
         >
           Close
         </Button>
         <Button
           variant="primary"
           onClick={editCurrentCustomers}
-          disabled={valueName === '' || valueAddress === '' || valuePhone === ''}
+          disabled={
+            valueName === '' ||
+            valueAddress === '' ||
+            valuePhone === ''
+          }
         >
           Save Changes
         </Button>
