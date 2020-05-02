@@ -1,0 +1,32 @@
+.Invoice {
+	padding: 50px 100px
+}
+
+.Invoice > h1 {
+	display: inline;
+}
+
+.customerSelect{
+	width: 300px;
+}
+
+.productSelect{
+	width: 400px;
+}
+
+.Invoice > label {
+	display: block;
+}
+
+.trashI > i {
+	margin-right: 5px;
+	padding: 5px;
+	border: 1px solid black;
+	border-radius: 5px;
+}
+
+.trashI:hover > i {
+	background-color: black;
+	color: white;
+	transition: all 300ms;
+}
