@@ -1,17 +1,22 @@
-import { CREATE_PRODUCT, EDIT_PRODUCT, DELETE_PRODUCT } from '../actions/actionTypes'
-
 const initialState = {
 	list: []
 }
 
+import {
+	CREATE_PRODUCT,
+	EDIT_PRODUCT,
+	DELETE_PRODUCT
+} from '../actions/actionTypes'
+
 export default function productsReducer(state = initialState, action) {
 
-	const removeProduct = (array, action) => {
-		return array.filter((item) => item.id !== action.id)
+
+	const removeProduct = (productsArray, action) => {
+		return productsArray.filter((item) => item.id !== action.id)
 	}
 
-	const editProduct = (array, action) => {
-		return array.map((item) => {
+	const editProduct = (productsArray, action) => {
+		return productsArray.map((item) => {
 			if (item.id !== action.id) {
 				return item
 			}

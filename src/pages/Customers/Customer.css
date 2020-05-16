@@ -1,14 +1,16 @@
 .Customer {
   padding: 50px 100px
 }
+
 .Customer > h1 {
   display: inline;
 }
+
 .Customer > button {
   vertical-align: super;
   margin-left: 10px;
-
 }
+
 .EditCustomersList{
   display: flex;
   justify-content: space-between;

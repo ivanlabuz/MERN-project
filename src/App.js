@@ -9,7 +9,6 @@ import {Switch, Route} from 'react-router-dom'
 import Invoices from './pages/Invoices/Invoices'
 import invoice from './pages/invoice/Invoice';
 
-
 const App = () => {
   return (
     <React.Fragment>

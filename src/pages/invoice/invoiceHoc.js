@@ -1,16 +1,30 @@
 import React, { useState, useEffect } from 'react'
+import { Table } from 'react-bootstrap'
 
 export default (WrappedComponent) => {
-	return (props) => {
-		const invoiceId = props.match.params.id
-		const invoice = props.invoices.find(i => i.id === invoiceId) ??
+	return ({
+		match,
+		invoices,
+		invoiceItems,
+		customers,
+		products,
+		editInvoiceAndItems,
+		removeInvoiceItems,
+		createInvoiceAndItems,
+		history,
+		...props
+	}) => {
+		const invoiceId = match.params.id
+		const invoice = invoices.find(i => i.id === invoiceId) ??
 		{
 			id: '',
-			customer_id: 'select...',
+			customer_id: '',
 			discount: null,
 			total: null
 		}
-		const invoiceItem = props.invoiceItems.filter(item => item.invoice_id === invoiceId) ?? []
+		const invoiceItem = invoiceItems.filter(item => {
+			return item.invoice_id === invoiceId
+		}) ?? []
 		const [newInvoice, setNewInvoice] = useState({})
 		const [newInvoiceItem, setNewInvoiceItem] = useState([])
 		const [selectProduct, setSelectProduct] = useState('')
@@ -31,12 +45,11 @@ export default (WrappedComponent) => {
 		}, [])
 
 		const handleChangeDiscount = (event) => {
-			setNewInvoice({
-				id: newInvoice.id,
-				customer_id: newInvoice.customer_id,
-				discount: event.target.value,
-				total: newInvoice.total
-			})
+			let value = event.target.value
+			setNewInvoice((prevState) => ({
+				...prevState,
+				discount: value
+			}))
 		}
 
 		const handleChangeProduct = (event) => {
@@ -44,27 +57,26 @@ export default (WrappedComponent) => {
 		}
 
 		const handleChangeCustomer = (event) => {
-			setNewInvoice({
-				id: newInvoice.id,
-				customer_id: event.target.value,
-				discount: newInvoice.discount,
-				total: newInvoice.total
-			})
+			let value = event.target.value
+			setNewInvoice((prevState) => ({
+				...prevState,
+				customer_id: value,
+			}))
 		}
 
 		let deleteInvoiceItems = (indexCurrent, currentIdDeletedItem) => {
-			setNewInvoiceItem(newInvoiceItem.filter((item, index) => index !== indexCurrent))
+			setNewInvoiceItem(newInvoiceItem.filter((item, index) => {
+				return index !== indexCurrent
+			}))
 			setIdDeletedItem([...idDeletedItem, currentIdDeletedItem])
 		}
 
 		const handleAddInvoiceItem = () => {
-			setNewInvoiceItem((prevState) => (
+			setNewInvoiceItem(
 				[...newInvoiceItem, {
-					id: newInvoiceItem.id,
-					invoice_id: newInvoiceItem.invoice_id,
 					product_id: selectProduct,
 					quantity: 1
-				}])
+				}]
 			)
 		}
 
@@ -75,22 +87,28 @@ export default (WrappedComponent) => {
 		}
 
 		const selectCustomerOptions = () => {
-			return selectOptions(props.customers ?? [])
+			return selectOptions(customers ?? [])
 		}
 
 		const selectProductOptions = () => {
-			return selectOptions(props.products ?? [])
+			return selectOptions(products ?? [])
 		}
 
 		let invoiceItemName = (product_id) => {
-			return props.products.find((item) => item.id === product_id).name
+			return products.find((item) => item.id === product_id).name
 		}
 
 		let invoiceItemPrice = (product_id) => {
-			return props.products.find((item) => item.id === product_id).price
+			return products.find((item) => item.id === product_id).price
 		}
 
-		const handleEditInvoiceItem = (id, product_id, invoice_id, indexCurrent, event) => {
+		const handleEditInvoiceItem = (
+			id,
+			product_id,
+			invoice_id,
+			indexCurrent,
+			event
+		) => {
 			let invoiceItem =
 			{
 				id,
@@ -107,38 +125,63 @@ export default (WrappedComponent) => {
 					...invoiceItem
 				}
 			})
-		)}
+			)
+		}
 
 		const invoiceItemsList = () => {
 			let arrayFilter = newInvoiceItem
-			return arrayFilter.map((item, index) => (
-				<tr key={index}>
-					<td>{invoiceItemName(item.product_id)}</td>
-					<td>{invoiceItemPrice(item.product_id)}</td>
-					<td><input
-						type='number'
-						value={item.quantity ?? ''}
-						onChange={(event) => { handleEditInvoiceItem(item.id, item.product_id, item.invoice_id, index, event) }}
-						min='1'
-					></input></td>
-					<td className='trashI'><i
-						className="fa fa-trash"
-						aria-hidden="true"
-						onClick={() => deleteInvoiceItems(index, item.id)}
-					></i></td>
-				</tr>
-			))
+			if (arrayFilter.length) {
+				return <Table>
+					<thead>
+						<tr>
+							<th>Name</th>
+							<th>Price</th>
+							<th>Qty</th>
+						</tr>
+					</thead>
+					<tbody>
+						{arrayFilter.map((item, index) => (
+							<tr key={index}>
+								<td>{invoiceItemName(item.product_id)}</td>
+								<td>{invoiceItemPrice(item.product_id)}</td>
+								<td><input
+									type='number'
+									value={item.quantity ?? ''}
+									onChange={(event) => {
+										handleEditInvoiceItem(
+											item.id,
+											item.product_id,
+											item.invoice_id,
+											index, event
+										)
+									}}
+									min='1'
+								></input></td>
+								<td className='trashI'><i
+									className="fa fa-trash"
+									aria-hidden="true"
+									onClick={() => deleteInvoiceItems(index, item.id)}
+								></i></td>
+							</tr>
+						))}
+					</tbody>
+				</Table>
+			} else {
+				return <h5 style={{ textAlign: 'center', paddingTop: '50px' }}>
+					No invoices items, create new invoices items.
+				</h5 >
+			}
 		}
 
-		const editInvoiceAndItemsAtStore = () => {
-			props.editInvoiceAndItems(newInvoice, newInvoiceItem)
-			props.removeInvoiceItems(idDeletedItem)
-			props.history.push('/invoices')
+		const editInvoiceAndItemsAtStore = async () => {
+			await editInvoiceAndItems(newInvoice, newInvoiceItem)
+			await removeInvoiceItems(idDeletedItem)
+			history.push('/invoices')
 		}
 
-		const addInvoiceAndItemsAtStore = () => {
-			props.createInvoiceAndItems(newInvoice, newInvoiceItem)
-			props.history.push('/invoices')
+		const addInvoiceAndItemsAtStore = async () => {
+			await createInvoiceAndItems(newInvoice, newInvoiceItem)
+			history.push('/invoices')
 		}
 
 		const totalWithDiscount = () => {
@@ -148,12 +191,20 @@ export default (WrappedComponent) => {
 			let itemsTotal = itemSum.reduce((a, b) => {
 				return a + b;
 			}, 0)
-			return (itemsTotal - ((newInvoice.discount / 100) * itemsTotal)).toFixed(2)
+
+			return (itemsTotal - ((newInvoice.discount / 100) * itemsTotal))
+				.toFixed(2)
 		}
 
 		const getTitle = (id) => (id ? 'Edit invoice' : 'New invoice')
+
 		const getTitleButton = (id) => (id ? 'Edit invoice' : 'Create invoice')
-		const getHendlersAddAllStore = (id) => (id ? editInvoiceAndItemsAtStore : addInvoiceAndItemsAtStore)
+
+		const getHendlersAddAllStore = (id) => (
+			id ?
+				editInvoiceAndItemsAtStore
+				: addInvoiceAndItemsAtStore
+		)
 
 		return <WrappedComponent
 			title={getTitle(invoiceId)}

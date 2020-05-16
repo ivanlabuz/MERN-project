@@ -1,4 +1,8 @@
-import { CREATE_CUSTOMER, EDIT_CUSTOMER, DELETE_CUSTOMER } from '../actions/actionTypes'
+import {
+	CREATE_CUSTOMER,
+	EDIT_CUSTOMER,
+	DELETE_CUSTOMER
+} from '../actions/actionTypes'
 
 const initialState = {
 	list: []
@@ -6,12 +10,12 @@ const initialState = {
 
 export default function customersReducer(state = initialState, action) {
 
-	const removeCustomer = (array, action) => {
-		return array.filter((item) => item.id !== action.id)
+	const removeCustomer = (CustomersArray, action) => {
+		return CustomersArray.filter((item) => item.id !== action.id)
 	}
 
-	const editCustomer = (array, action) => {
-		return array.map((item) => {
+	const editCustomer = (CustomersArray, action) => {
+		return CustomersArray.map((item) => {
 			if (item.id !== action.id) {
 				return item
 			}

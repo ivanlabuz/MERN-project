@@ -1,14 +1,16 @@
 .Product {
   padding: 50px 100px
 }
+
 .Product > h1 {
   display: inline;
 }
+
 .Product > button {
   vertical-align: super;
   margin-left: 10px;
-
 }
+
 .EditProductsList{
   display: flex;
   justify-content: space-between;

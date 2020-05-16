@@ -1,14 +1,19 @@
 import React, { useState } from 'react'
 import { Modal, InputGroup, FormControl, Button } from 'react-bootstrap'
 
-export const CreateModal = (props) => {
+export const CreateModal = ({
+  handleCloseCreate,
+  newCustomer,
+  showCreate,
+  handleClose
+}) => {
   const [valueName, setValueName] = useState('')
   const [valueAddress, setValueAddress] = useState('')
   const [valuePhone, setValuePhone] = useState('')
-  
+
   const saveNewCustomer = () => {
-    props.handleCloseCreate()
-    props.newCustomer({
+    handleCloseCreate()
+    newCustomer({
       name: valueName,
       address: valueAddress,
       phone: valuePhone
@@ -19,7 +24,7 @@ export const CreateModal = (props) => {
   }
 
   return (
-    <Modal show={props.showCreate} onHide={props.handleCloseCreate}>
+    <Modal show={showCreate} onHide={handleCloseCreate}>
       <Modal.Header closeButton>
         <Modal.Title>Enter new user data</Modal.Title>
       </Modal.Header>
@@ -81,14 +86,18 @@ export const CreateModal = (props) => {
       </Modal.Body>
       <Modal.Footer>
         <Button variant="secondary"
-          onClick={props.handleClose}
+          onClick={handleClose}
         >
           Close
         </Button>
         <Button
           variant="primary"
           onClick={saveNewCustomer}
-          disabled={valueName === '' || valueAddress === '' || valuePhone === ''}
+          disabled={
+            valueName === '' ||
+            valueAddress === '' ||
+            valuePhone === ''
+          }
         >
           Save new user
         </Button>
