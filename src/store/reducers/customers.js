@@ -5,26 +5,7 @@ import {
 } from '../actions/actionTypes'
 
 const initialState = {
-	list: [
-		{
-			id: '100',
-			name: 'Mark',
-			address: 'Otto',
-			phone: '555-222'
-		},
-		{
-			id: '200',
-			name: 'Jacob',
-			address: 'Thornton',
-			phone: '555-1111'
-		},
-		{
-			id: '300',
-			name: 'Ivan',
-			address: 'Taganrog',
-			phone: '555-9999'
-		}
-	]
+	list: []
 }
 
 export default function customersReducer(state = initialState, action) {
