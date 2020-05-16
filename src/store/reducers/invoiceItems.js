@@ -1,26 +1,7 @@
 import { CREATE_INVOICE_ITEMS, DELETE_INVOICE_ITEMS, EDIT_INVOICE_ITEM } from '../actions/actionTypes'
 
 const initialState = {
-	list: [
-		{
-			id: '5515851588',
-			invoice_id: '8596',
-			product_id: '256',
-			quantity: 2
-		},
-		{
-			id: '916296',
-			invoice_id: '8596',
-			product_id: '184',
-			quantity: 5
-		},
-		{
-			id: '8125632',
-			invoice_id: '7856',
-			product_id: '295',
-			quantity: 3
-		}
-	]
+	list: []
 }
 
 export default function invoiceItemsReducer(state = initialState, action) {

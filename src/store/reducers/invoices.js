@@ -1,20 +1,7 @@
 import { DELETE_INVOICE, CREATE_INVOICE, EDIT_INVOICE } from "../actions/actionTypes"
 
 const initialState = {
-	list: [
-		{
-			id: '8596',
-			customer_id: '100',
-			discount: 1,
-			total: 138.5307
-		},
-		{
-			id: '7856',
-			customer_id: '200',
-			discount: 5,
-			total: 62.6715
-		}
-	]
+	list: []
 }
 
 export default function invoicesReducer(state = initialState, action) {
