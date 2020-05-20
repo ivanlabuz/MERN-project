@@ -1,48 +1,23 @@
 import {
 	CREATE_PRODUCT,
 	EDIT_PRODUCT,
-	DELETE_PRODUCT
+	DELETE_PRODUCT,
+	GET_PRODUCTS
 } from '../actions/actionTypes'
 
 const initialState = {
-	list: [
-		{
-			id: '256',
-			name: 'Parachute Pants',
-			price: 29.99
-		},
-		{
-			id: '573',
-			name: 'Phone Holder',
-			price: 9.99
-		},
-		{
-			id: '784',
-			name: 'Pet Rock',
-			price: 5.99
-		},
-		{
-			id: '184',
-			name: 'Egg Timer',
-			price: 15.99
-		},
-		{
-			id: '295',
-			name: 'Neon Green Hat',
-			price: 21.99
-		}
-	]
+	list: []
 }
 
 export default function productsReducer(state = initialState, action) {
 
 	const removeProduct = (productsArray, action) => {
-		return productsArray.filter((item) => item.id !== action.id)
+		return productsArray.filter((item) => item._id !== action._id)
 	}
 
 	const editProduct = (productsArray, action) => {
 		return productsArray.map((item) => {
-			if (item.id !== action.id) {
+			if (item._id !== action.product._id) {
 				return item
 			}
 			return {
@@ -67,6 +42,11 @@ export default function productsReducer(state = initialState, action) {
 			return {
 				...state,
 				list: removeProduct(state.list, action)
+			}
+		case GET_PRODUCTS:
+			return {
+				...state,
+				list: action.productsList
 			}
 		default:
 			return state

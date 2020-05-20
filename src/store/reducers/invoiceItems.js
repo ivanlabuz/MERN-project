@@ -1,48 +1,35 @@
 import {
 	CREATE_INVOICE_ITEMS,
 	DELETE_INVOICE_ITEMS,
-	EDIT_INVOICE_ITEM
+	EDIT_INVOICE_ITEM,
+	DELETE_INVOICE_ITEMS_WITH_INVOICE,
+	GET_INVOICE_ITEMS
 } from '../actions/actionTypes'
 
 const initialState = {
-	list: [
-		{
-			id: '5515851588',
-			invoice_id: '8596',
-			product_id: '256',
-			quantity: 2
-		},
-		{
-			id: '916296',
-			invoice_id: '8596',
-			product_id: '184',
-			quantity: 5
-		},
-		{
-			id: '8125632',
-			invoice_id: '7856',
-			product_id: '295',
-			quantity: 3
-		}
-	]
+	list: []
 }
 
 export default function invoiceItemsReducer(state = initialState, action) {
 
 	const removeInvoiceItems = (invoicesItemsArray, action) => {
-		return invoicesItemsArray.filter((item) => !action.arrayId.includes(item.id))
+		return invoicesItemsArray.filter((item) => !action.arrayId.includes(item._id))
 	}
 
 	const editInvoiceItems = (invoicesItemsArray, action) => {
 		return invoicesItemsArray.map((item) => {
-			if (item.id !== action.invoiceItem.id) {
+			if (item._id !== action.editItems._id) {
 				return item
 			}
 			return {
 				...item,
-				...action.invoiceItem
+				...action.editItems
 			}
 		})
+	}
+
+	const removeInvoiceItemsWithInvoice = (invoicesItemsArray, action) => {
+		return invoicesItemsArray.filter(item => item.invoice_id !== action._id)
 	}
 
 	switch (action.type) {
@@ -61,6 +48,17 @@ export default function invoiceItemsReducer(state = initialState, action) {
 				...state,
 				list: editInvoiceItems(state.list, action)
 			}
+		case DELETE_INVOICE_ITEMS_WITH_INVOICE:
+			return {
+				...state,
+				list: removeInvoiceItemsWithInvoice(state.list, action)
+			}
+		case GET_INVOICE_ITEMS:
+			return {
+				...state,
+				list: action.invoiceItemsList
+			}
+
 		default:
 			return state
 	}

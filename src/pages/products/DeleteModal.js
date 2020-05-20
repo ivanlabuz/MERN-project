@@ -3,14 +3,14 @@ import { Modal, Button } from 'react-bootstrap'
 
 export const DeleteModal = ({
   handleCloseDelete,
-  id,
+  _id,
   name,
   productDelete,
   showDelete
 }) => {
-  const finalDelete = (id) => {
+  const finalDelete = (_id) => {
     handleCloseDelete()
-    productDelete(id)
+    productDelete(_id)
   }
 
   return (
@@ -25,7 +25,7 @@ export const DeleteModal = ({
         <Button variant="secondary" onClick={handleCloseDelete}>
           No
         </Button>
-        <Button variant="primary" onClick={() => finalDelete(id)}>
+        <Button variant="primary" onClick={() => finalDelete(_id)}>
           Yes
         </Button>
       </Modal.Footer>

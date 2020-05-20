@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Table, Button } from 'react-bootstrap'
 import './Customer.css'
 import { Helmet } from 'react-helmet'
@@ -6,15 +6,24 @@ import { CreateModal } from './createModal'
 import { DeleteModal } from './DeleteModal'
 import { EditModal } from './EditModal'
 import { connect } from 'react-redux'
+import { Loading } from '../../components/loading/loading'
 import {
   createCustomer,
   editCustomer,
-  deleteCustomer
+  deleteCustomer,
+  getCustomers
 } from '../../store/actions/customers'
 
-function Customers({ deleteCustomer, editCustomer, createCustomer, customers }) {
+function Customers({
+  deleteCustomer,
+  editCustomer,
+  createCustomer,
+  getCustomers,
+  customers
+}) {
+
   const [currentCustomer, setCurrentCustomer] = useState({
-    id: null,
+    _id: null,
     name: null,
     address: null,
     phone: null
@@ -22,6 +31,13 @@ function Customers({ deleteCustomer, editCustomer, createCustomer, customers }) 
   const [showCreate, setShowCreate] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    getCustomers().finally(setIsLoading(false))
+
+    // eslint-disable-next-line  
+  }, [])
 
   const handleCloseCreate = () => setShowCreate(false);
 
@@ -29,23 +45,23 @@ function Customers({ deleteCustomer, editCustomer, createCustomer, customers }) 
 
   const handleCloseEdit = () => setShowEdit(false);
 
-  const handleShowEdit = (id, name, address, phone) => {
-    setCurrentCustomer({ id, name, address, phone })
+  const handleShowEdit = (_id, name, address, phone) => {
+    setCurrentCustomer({ _id, name, address, phone })
     setShowEdit(true);
   }
 
-  const handleCloseDelete = (id) => {
+  const handleCloseDelete = (_id) => {
     setCurrentCustomer((prevState) => ({
       ...prevState,
-      id
+      _id
     }));
     setShowDelete(false);
   }
 
-  const handleShowDelete = (id, name) => {
+  const handleShowDelete = (_id, name) => {
     setCurrentCustomer((prevState) => ({
       ...prevState,
-      id, name
+      _id, name
     }));
     setShowDelete(true);
   }
@@ -63,7 +79,7 @@ function Customers({ deleteCustomer, editCustomer, createCustomer, customers }) 
         </thead>
         <tbody>
           {array.map((customer, index) => (
-            <tr key={customer.id}>
+            <tr key={customer._id}>
               <td>{index + 1}</td>
               <td>{customer.name}</td>
               <td>{customer.address}</td>
@@ -77,7 +93,7 @@ function Customers({ deleteCustomer, editCustomer, createCustomer, customers }) 
                     aria-hidden="true"
                     onClick={() =>
                       handleShowEdit(
-                        customer.id,
+                        customer._id,
                         customer.name,
                         customer.address,
                         customer.phone
@@ -87,7 +103,7 @@ function Customers({ deleteCustomer, editCustomer, createCustomer, customers }) 
                     className="fa fa-trash"
                     aria-hidden="true"
                     onClick={
-                      () => handleShowDelete(customer.id, customer.name)
+                      () => handleShowDelete(customer._id, customer.name)
                     }
                   ></i>
                 </div>
@@ -103,12 +119,12 @@ function Customers({ deleteCustomer, editCustomer, createCustomer, customers }) 
     }
   }
 
-  const customerDelete = id => {
-    deleteCustomer(id)
+  const customerDelete = _id => {
+    deleteCustomer(_id)
   }
 
-  const customerEdit = (id, object) => {
-    editCustomer(id, object)
+  const customerEdit = (_id, object) => {
+    editCustomer(_id, object)
   }
 
   const newCustomer = object => {
@@ -124,7 +140,10 @@ function Customers({ deleteCustomer, editCustomer, createCustomer, customers }) 
       >
         Create
       </Button>
-      {customersList(customers)}
+      {
+        isLoading
+          ? <Loading />
+          : customersList(customers)}
       <CreateModal
         handleCloseCreate={handleCloseCreate}
         newCustomer={newCustomer}
@@ -134,14 +153,14 @@ function Customers({ deleteCustomer, editCustomer, createCustomer, customers }) 
         handleCloseDelete={handleCloseDelete}
         customerDelete={customerDelete}
         showDelete={showDelete}
-        id={currentCustomer.id}
+        _id={currentCustomer._id}
         name={currentCustomer.name}
       />
       <EditModal
         handleCloseEdit={handleCloseEdit}
         showEdit={showEdit}
         customerEdit={customerEdit}
-        id={currentCustomer.id}
+        _id={currentCustomer._id}
         name={currentCustomer.name}
         address={currentCustomer.address}
         phone={currentCustomer.phone}
@@ -152,7 +171,7 @@ function Customers({ deleteCustomer, editCustomer, createCustomer, customers }) 
     </div>
   )
 }
-setTimeout(console.log(1), 3000)
+
 function mapStateToProps(state) {
   return {
     customers: state.customers.list
@@ -161,9 +180,10 @@ function mapStateToProps(state) {
 
 function mapStateToDispatch(dispatch) {
   return {
+    getCustomers: () => dispatch(getCustomers()),
     createCustomer: (customer) => dispatch(createCustomer(customer)),
-    editCustomer: (id, customer) => dispatch(editCustomer(id, customer)),
-    deleteCustomer: (id) => dispatch(deleteCustomer(id))
+    editCustomer: (_id, customer) => dispatch(editCustomer(_id, customer)),
+    deleteCustomer: (_id) => dispatch(deleteCustomer(_id)),
   }
 }
 

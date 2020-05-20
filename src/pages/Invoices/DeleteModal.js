@@ -6,12 +6,12 @@ export const DeleteModal = ({
   invoiceDelete,
   showDelete,
   name,
-  id
+  _id
 }) => {
 
-  const finishDelete = (id) => {
+  const finishDelete = (_id) => {
     handleCloseDelete()
-    invoiceDelete(id)
+    invoiceDelete(_id)
   }
 
   return (
@@ -26,7 +26,7 @@ export const DeleteModal = ({
         <Button variant="secondary" onClick={handleCloseDelete}>
           No
         </Button>
-        <Button variant="primary" onClick={() => finishDelete(id)}>
+        <Button variant="primary" onClick={() => finishDelete(_id)}>
           Yes
         </Button>
       </Modal.Footer>

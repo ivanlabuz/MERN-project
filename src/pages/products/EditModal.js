@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { Modal, InputGroup, FormControl, Button } from 'react-bootstrap'
 
-export const EditModal = ({handleCloseEdit, id, name, price, productEdit, showEdit}) => {
+export const EditModal = ({handleCloseEdit, _id, name, price, productEdit, showEdit}) => {
   const [valueName, setValueName] = useState('')
   const [valuePrice, setValuePrice] = useState('')
 
   const editCurrentProduct = () => {
     handleCloseEdit()
-    productEdit(id, {
+    productEdit(_id, {
       name: valueName,
       price: valuePrice
     })

@@ -1,34 +1,50 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import './Invoices.css'
 import { connect } from 'react-redux'
 import { Table, Button } from 'react-bootstrap'
 import { Helmet } from 'react-helmet'
 import { DeleteModal } from './DeleteModal'
-import { deleteInvoice } from '../../store/actions/invoices'
+import { deleteInvoice, getInvoices } from '../../store/actions/invoices'
+import { Loading } from '../../components/loading/loading'
 import { NavLink } from 'react-router-dom'
 
-const Invoices = ({ customers, deleteInvoice, invoices }) => {
+const Invoices = ({
+  customers,
+  products,
+  deleteInvoice,
+  invoices,
+  getInvoices }) => {
+
+  useEffect(() => {
+    getInvoices().finally(
+      setTimeout(setIsLoading, 1000, false)
+    )
+    // eslint-disable-next-line
+  }, [])
+
   const [currentInvoice, setCurrentInvoice] = useState({
-    id: null,
+    _id: null,
     name: null
   })
+  const [isLoading, setIsLoading] = useState(true);
   const [showDelete, setShowDelete] = useState(false);
 
-  const handleCloseDelete = (id) => {
+  const handleCloseDelete = (_id) => {
     setCurrentInvoice((prevState) => ({
       ...prevState,
-      id: null
+      _id: null
     }))
     setShowDelete(false);
   }
 
-  const handleShowDelete = (id, name) => {
-    setCurrentInvoice({ id, name })
+  const handleShowDelete = (_id, name) => {
+    setCurrentInvoice({ _id, name })
     setShowDelete(true);
   }
 
   let customerName = (customer_id) => {
-    let customer = customers.find((item) => item.id === customer_id)
+    let customer = customers.find(item => item._id === customer_id)
+
     if (customer) {
       return customer.name
     }
@@ -48,7 +64,7 @@ const Invoices = ({ customers, deleteInvoice, invoices }) => {
         <tbody>
           {array.map((invoice, index) => {
             return (
-              <tr key={invoice.id}>
+              <tr key={invoice._id}>
                 <td>{index + 1}</td>
                 <td>{customerName(invoice.customer_id)}</td>
                 <td>{invoice.discount}</td>
@@ -57,7 +73,7 @@ const Invoices = ({ customers, deleteInvoice, invoices }) => {
                 >
                   {invoice.total}
                   <div>
-                    <NavLink to={`/Invoices/Invoice/${invoice.id}`} >
+                    <NavLink to={`/Invoices/Invoice/${invoice._id}`} >
                       <i
                         className="fa fa-pencil"
                         aria-hidden="true"
@@ -67,7 +83,7 @@ const Invoices = ({ customers, deleteInvoice, invoices }) => {
                       className="fa fa-trash"
                       aria-hidden="true"
                       onClick={() => {
-                        handleShowDelete(invoice.id, invoice.name)
+                        handleShowDelete(invoice._id, invoice.name)
                       }}
                     ></i>
                   </div>
@@ -84,8 +100,9 @@ const Invoices = ({ customers, deleteInvoice, invoices }) => {
     }
   }
 
-  const invoiceDelete = id => {
-    deleteInvoice(id)
+  const invoiceDelete = _id => {
+    let arrayInvoiceItems = invoices.find(i => i._id === _id).invoiceItems
+    deleteInvoice(_id, arrayInvoiceItems)
   }
 
   return (
@@ -96,12 +113,15 @@ const Invoices = ({ customers, deleteInvoice, invoices }) => {
           variant="outline-dark"
         >Create</Button>
       </NavLink>
-      {invoicesList(invoices)}
+      {
+        isLoading
+          ? <Loading />
+          : invoicesList(invoices)}
       <DeleteModal
         handleCloseDelete={handleCloseDelete}
         invoiceDelete={invoiceDelete}
         showDelete={showDelete}
-        id={currentInvoice.id}
+        _id={currentInvoice._id}
         name={currentInvoice.name}
       />
       <Helmet>
@@ -114,15 +134,14 @@ const Invoices = ({ customers, deleteInvoice, invoices }) => {
 function mapStateToProps(state) {
   return {
     customers: state.customers.list,
-    products: state.products.list,
     invoices: state.invoices.list,
-    invoiceItems: state.invoiceItems.list
   }
 }
 
 function mapStateToDispatch(dispatch) {
   return {
-    deleteInvoice: (id) => dispatch(deleteInvoice(id))
+    deleteInvoice: (_id, arrayInvoiceItems) => dispatch(deleteInvoice(_id, arrayInvoiceItems)),
+    getInvoices: () => dispatch(getInvoices())
   }
 }
 

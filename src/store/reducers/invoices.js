@@ -1,40 +1,28 @@
 import {
 	DELETE_INVOICE,
 	CREATE_INVOICE,
-	EDIT_INVOICE
+	EDIT_INVOICE,
+	GET_INVOICES
 } from "../actions/actionTypes"
 
 const initialState = {
-	list: [
-		{
-			id: '8596',
-			customer_id: '100',
-			discount: 1,
-			total: 138.5307
-		},
-		{
-			id: '7856',
-			customer_id: '200',
-			discount: 5,
-			total: 62.6715
-		}
-	]
+	list: []
 }
 
 export default function invoicesReducer(state = initialState, action) {
 
 	const removeInvoice = (invoicesArray, action) => {
-		return invoicesArray.filter((item) => item.id !== action.id)
+		return invoicesArray.filter((item) => item._id !== action._id)
 	}
 
 	const editInvoice = (invoicesArray, action) => {
 		return invoicesArray.map((item) => {
-			if (item.id !== action.invoice.id) {
+			if (item._id !== action.editInvoice._id) {
 				return item
 			}
 			return {
 				...item,
-				...action.invoice
+				...action.editInvoice
 			}
 		})
 	}
@@ -54,6 +42,11 @@ export default function invoicesReducer(state = initialState, action) {
 			return {
 				...state,
 				list: removeInvoice(state.list, action)
+			}
+		case GET_INVOICES:
+			return {
+				...state,
+				list: action.invoicesList
 			}
 		default:
 			return state
