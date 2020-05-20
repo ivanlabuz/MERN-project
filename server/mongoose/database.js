@@ -1,7 +1,7 @@
 let mongoose = require('mongoose');
 
-const server = '127.0.0.1:27017'; // REPLACE WITH YOUR DB SERVER
-const database = 'react-volt';      // REPLACE WITH YOUR DB NAME
+const server = '127.0.0.1:27017'; 
+const database = 'react-volt';      
 
 class Database {
   constructor() {
@@ -9,7 +9,11 @@ class Database {
   }
 
   _connect() {
-    mongoose.connect(`mongodb://${server}/${database}`, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false})
+    mongoose.connect(`mongodb://${server}/${database}`, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      useFindAndModify: false
+    })
       .then(() => {
         console.log(`Database connection successful ${server} ${database}`)
       })

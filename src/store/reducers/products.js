@@ -1,23 +1,23 @@
+import {
+	CREATE_PRODUCT,
+	EDIT_PRODUCT,
+	DELETE_PRODUCT,
+	GET_PRODUCTS
+} from '../actions/actionTypes'
+
 const initialState = {
 	list: []
 }
 
-import {
-	CREATE_PRODUCT,
-	EDIT_PRODUCT,
-	DELETE_PRODUCT
-} from '../actions/actionTypes'
-
 export default function productsReducer(state = initialState, action) {
 
-
 	const removeProduct = (productsArray, action) => {
-		return productsArray.filter((item) => item.id !== action.id)
+		return productsArray.filter((item) => item._id !== action._id)
 	}
 
 	const editProduct = (productsArray, action) => {
 		return productsArray.map((item) => {
-			if (item.id !== action.id) {
+			if (item._id !== action.product._id) {
 				return item
 			}
 			return {
@@ -42,6 +42,11 @@ export default function productsReducer(state = initialState, action) {
 			return {
 				...state,
 				list: removeProduct(state.list, action)
+			}
+		case GET_PRODUCTS:
+			return {
+				...state,
+				list: action.productsList
 			}
 		default:
 			return state

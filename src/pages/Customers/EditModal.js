@@ -5,7 +5,7 @@ export const EditModal = ({
   address,
   customerEdit,
   handleCloseEdit,
-  id,
+  _id,
   name,
   phone,
   showEdit
@@ -16,7 +16,7 @@ export const EditModal = ({
 
   const editCurrentCustomers = () => {
     handleCloseEdit()
-    customerEdit(id, {
+    customerEdit(_id, {
       name: valueName,
       address: valueAddress,
       phone: valuePhone

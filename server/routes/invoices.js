@@ -7,7 +7,6 @@ router.get('/', async (req, res) => {
   try {
     await InvoicesShema.find(
       (error, array) => res.status(200).send(array))
-      .populate('customer_id')
   } catch (error) {
     res.status(500).send(error)
   }
@@ -16,15 +15,12 @@ router.get('/', async (req, res) => {
 router.get('/:invoice_id/items', async (req, res) => {
   try {
     if (await InvoicesShema
-      .findById({ _id: req.params.invoice_id })) {
+      .findById(req.params.invoice_id)) {
       await InvoiceItemsShema
         .find(
           { invoice_id: req.params.invoice_id },
           (error, array) => res.status(200).send(array)
         )
-        .populate('invoice_id')
-        .populate('product_id')
-
     } else {
       res.status(404).send({ "message error": "No item found" })
     }
@@ -41,7 +37,6 @@ router.get('/:id', async (req, res) => {
   try {
     const invoice = await InvoicesShema
       .findById(req.params.id, ((error, item) => item))
-      .populate('customer_id')
     if (invoice) {
       res.status(200).send(invoice)
     } else {
@@ -59,12 +54,10 @@ router.get('/:id', async (req, res) => {
 router.get('/:invoice_id/items/:id', async (req, res) => {
   try {
     if (await InvoicesShema
-      .findById({ _id: req.params.invoice_id })
+      .findById(req.params.invoice_id)
     ) {
       const invoiceItem = await InvoiceItemsShema
         .findById(req.params.id)
-        .populate('invoice_id')
-        .populate('product_id')
       if (invoiceItem) {
         res.status(200).send(invoiceItem)
       } else {
@@ -226,7 +219,7 @@ router.put('/:invoice_id/items/:id', async (req, res) => {
   ) {
     try {
       if (await InvoicesShema
-        .findById({ _id: req.params.invoice_id })
+        .findById(req.params.invoice_id)
       ) {
         const invoiceItemsShema = {
           product_id: req.body.product_id,

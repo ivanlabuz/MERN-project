@@ -1,9 +1,9 @@
 let mongoose = require('mongoose')
 
 let invoiceSchema = new mongoose.Schema({
-  customer_id: { type: mongoose.Schema.Types.ObjectId, ref: "Customer"},
+  customer_id: mongoose.Schema.Types.ObjectId,
   discount: Number,
-  total: mongoose.Decimal128,
+  total: Number,
   invoiceItems: Array
 })
 

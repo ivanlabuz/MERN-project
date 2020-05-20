@@ -37,7 +37,7 @@ router.post('/', async (req, res) => {
   ) {
     const customerShema = new CustomerShema({
       name: req.body.name,
-      adress: req.body.address,
+      address: req.body.address,
       phone: req.body.phone
     })
     try {
@@ -78,7 +78,7 @@ router.put('/:id', async (req, res) => {
     const customerShema = new CustomerShema({
       _id: req.params.id,
       name: req.body.name,
-      adress: req.body.address,
+      address: req.body.address,
       phone: req.body.phone
     })
     try {

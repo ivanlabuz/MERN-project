@@ -12,22 +12,40 @@ export default (WrappedComponent) => {
 		removeInvoiceItems,
 		createInvoiceAndItems,
 		history,
+		getInvoiceItems,
 		...props
 	}) => {
-		const invoiceId = match.params.id
-		const invoice = invoices.find(i => i.id === invoiceId) ??
+
+		useEffect(() => {
+			getInvoiceItems(invoiceId).finally(
+				setIsLoading(false)
+			)
+			// eslint-disable-next-line 
+		}, [])
+
+		useEffect(() => {
+			if (match.params.id) {
+				setNewInvoiceItem(invoiceItems ?? [])
+			} else {
+				setNewInvoiceItem([])
+			}
+			// eslint-disable-next-line
+		}, [invoiceItems])
+
+		let invoiceId = match.params.id
+
+		const invoice = invoices.find(i => i._id === invoiceId) ??
 		{
-			id: '',
+			_id: '',
 			customer_id: '',
 			discount: null,
 			total: null
 		}
-		const invoiceItem = invoiceItems.filter(item => {
-			return item.invoice_id === invoiceId
-		}) ?? []
+
 		const [newInvoice, setNewInvoice] = useState({})
 		const [newInvoiceItem, setNewInvoiceItem] = useState([])
 		const [selectProduct, setSelectProduct] = useState('')
+		const [isLoading, setIsLoading] = useState(true);
 		const [idDeletedItem, setIdDeletedItem] = useState([])
 
 		useEffect(() => {
@@ -39,7 +57,6 @@ export default (WrappedComponent) => {
 		}, [newInvoice.discount, newInvoiceItem])
 
 		useEffect(() => {
-			setNewInvoiceItem(invoiceItem)
 			setNewInvoice(invoice)
 			// eslint-disable-next-line 
 		}, [])
@@ -82,7 +99,7 @@ export default (WrappedComponent) => {
 
 		const selectOptions = (array) => {
 			return array.map((item, index) => (
-				<option key={index} value={item.id}>{item.name}</option>
+				<option key={index} value={item._id}>{item.name}</option>
 			))
 		}
 
@@ -95,15 +112,15 @@ export default (WrappedComponent) => {
 		}
 
 		let invoiceItemName = (product_id) => {
-			return products.find((item) => item.id === product_id).name
+			return products.find((item) => item._id === product_id).name
 		}
 
 		let invoiceItemPrice = (product_id) => {
-			return products.find((item) => item.id === product_id).price
+			return products.find((item) => item._id === product_id).price
 		}
 
 		const handleEditInvoiceItem = (
-			id,
+			_id,
 			product_id,
 			invoice_id,
 			indexCurrent,
@@ -111,7 +128,7 @@ export default (WrappedComponent) => {
 		) => {
 			let invoiceItem =
 			{
-				id,
+				_id,
 				invoice_id,
 				product_id,
 				quantity: event.target.value
@@ -149,7 +166,7 @@ export default (WrappedComponent) => {
 									value={item.quantity ?? ''}
 									onChange={(event) => {
 										handleEditInvoiceItem(
-											item.id,
+											item._id,
 											item.product_id,
 											item.invoice_id,
 											index, event
@@ -160,7 +177,7 @@ export default (WrappedComponent) => {
 								<td className='trashI'><i
 									className="fa fa-trash"
 									aria-hidden="true"
-									onClick={() => deleteInvoiceItems(index, item.id)}
+									onClick={() => deleteInvoiceItems(index, item._id)}
 								></i></td>
 							</tr>
 						))}
@@ -175,7 +192,9 @@ export default (WrappedComponent) => {
 
 		const editInvoiceAndItemsAtStore = async () => {
 			await editInvoiceAndItems(newInvoice, newInvoiceItem)
-			await removeInvoiceItems(idDeletedItem)
+			if (idDeletedItem.length) {
+				await removeInvoiceItems(match.params.id, idDeletedItem)
+			}
 			history.push('/invoices')
 		}
 
@@ -196,12 +215,12 @@ export default (WrappedComponent) => {
 				.toFixed(2)
 		}
 
-		const getTitle = (id) => (id ? 'Edit invoice' : 'New invoice')
+		const getTitle = (_id) => (_id ? 'Edit invoice' : 'New invoice')
 
-		const getTitleButton = (id) => (id ? 'Edit invoice' : 'Create invoice')
+		const getTitleButton = (_id) => (_id ? 'Edit invoice' : 'Create invoice')
 
-		const getHendlersAddAllStore = (id) => (
-			id ?
+		const getHendlersAddAllStore = (_id) => (
+			_id ?
 				editInvoiceAndItemsAtStore
 				: addInvoiceAndItemsAtStore
 		)
@@ -220,6 +239,7 @@ export default (WrappedComponent) => {
 			handleChangeProduct={handleChangeProduct}
 			hendlersAddAllStore={getHendlersAddAllStore(invoiceId)}
 			selectProduct={selectProduct}
+			isLoading={isLoading}
 			{...props} />
 	}
 }

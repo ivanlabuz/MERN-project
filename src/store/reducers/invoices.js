@@ -1,7 +1,8 @@
 import {
 	DELETE_INVOICE,
 	CREATE_INVOICE,
-	EDIT_INVOICE
+	EDIT_INVOICE,
+	GET_INVOICES
 } from "../actions/actionTypes"
 
 const initialState = {
@@ -11,17 +12,17 @@ const initialState = {
 export default function invoicesReducer(state = initialState, action) {
 
 	const removeInvoice = (invoicesArray, action) => {
-		return invoicesArray.filter((item) => item.id !== action.id)
+		return invoicesArray.filter((item) => item._id !== action._id)
 	}
 
 	const editInvoice = (invoicesArray, action) => {
 		return invoicesArray.map((item) => {
-			if (item.id !== action.invoice.id) {
+			if (item._id !== action.editInvoice._id) {
 				return item
 			}
 			return {
 				...item,
-				...action.invoice
+				...action.editInvoice
 			}
 		})
 	}
@@ -41,6 +42,11 @@ export default function invoicesReducer(state = initialState, action) {
 			return {
 				...state,
 				list: removeInvoice(state.list, action)
+			}
+		case GET_INVOICES:
+			return {
+				...state,
+				list: action.invoicesList
 			}
 		default:
 			return state

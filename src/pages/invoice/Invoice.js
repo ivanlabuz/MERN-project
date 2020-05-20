@@ -3,11 +3,13 @@ import { connect } from 'react-redux'
 import { Helmet } from 'react-helmet'
 import { InputGroup, FormControl, Form, Button } from 'react-bootstrap'
 import './Invoice.css'
+import { Loading } from '../../components/loading/loading'
 import invoiceHoc from './invoiceHoc'
 import {
 	createInvoiceAndItems,
 	editInvoiceAndItems,
-	removeInvoiceItems
+	removeInvoiceItems,
+	getInvoiceItems
 } from '../../store/actions/invoiceItems'
 
 const Invoice = ({
@@ -23,7 +25,8 @@ const Invoice = ({
 	handleAddInvoiceItem,
 	handleChangeProduct,
 	hendlersAddAllStore,
-	selectProduct
+	selectProduct,
+	isLoading
 }) => {
 	return <div className='Invoice'>
 		<h1>{title}</h1>
@@ -80,7 +83,10 @@ const Invoice = ({
 				</div>
 			</Form.Group>
 		</Form>
-		{invoiceItemsList()}
+		{
+			isLoading
+				? <Loading />
+				: invoiceItemsList()}
 		<div style={{ display: 'flex', justifyContent: 'space-between' }}>
 			<h1>Total:{total}</h1>
 			<Button
@@ -118,6 +124,7 @@ function mapStateToDispatch(dispatch) {
 		editInvoiceAndItems: (invoice, invoiceItems) =>
 			dispatch(editInvoiceAndItems(invoice, invoiceItems)),
 		removeInvoiceItems: (arrayId) => dispatch(removeInvoiceItems(arrayId)),
+		getInvoiceItems: (_id) => dispatch(getInvoiceItems(_id))
 	}
 }
 
